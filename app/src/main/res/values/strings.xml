@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">ComposeLab</string>
+    <string name="placeholder_date">2000.02</string>
+</resources>
