@@ -13,17 +13,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.composelab.data.WellnessTask
 import com.example.composelab.ui.theme.ComposeLabTheme
 import com.example.composelab.ui.theme.Dimens
+import com.example.composelab.viewmodel.WellnessViewModel
 
 @Composable
 fun WellnessTaskItem(
@@ -51,27 +48,28 @@ fun WellnessTaskItem(
     }
 }
 
-@Composable
-fun WellnessTaskItem(
-    modifier: Modifier = Modifier,
-    taskName: String,
-    onClose: () -> Unit
-) {
-    var checkedState by rememberSaveable { mutableStateOf(false) }
-    WellnessTaskItem(
-        taskName = taskName,
-        checked = checkedState,
-        onCheckedChange = { newValue -> checkedState = newValue },
-        onClose = onClose,
-        modifier = modifier
-    )
-}
+//@Composable
+//fun WellnessTaskItem(
+//    modifier: Modifier = Modifier,
+//    taskName: String,
+//    onClose: () -> Unit
+//) {
+//    var checkedState by rememberSaveable { mutableStateOf(false) }
+//    WellnessTaskItem(
+//        taskName = taskName,
+//        checked = ,
+//        onCheckedChange = { newValue -> checkedState = newValue },
+//        onClose = onClose,
+//        modifier = modifier
+//    )
+//}
 
 @Composable
 fun TaskList(
     modifier: Modifier = Modifier,
     tasks: List<WellnessTask>,
-    onCloseTask: (WellnessTask) -> Unit
+    onCloseTask: (WellnessTask) -> Unit,
+    onCheckedChange: (task: WellnessTask, checked: Boolean) -> Unit
 ) {
     LazyColumn(modifier = modifier) {
         items(
@@ -80,7 +78,9 @@ fun TaskList(
         ) { task ->
             WellnessTaskItem(
                 taskName = task.label,
-                onClose = { onCloseTask(task) }
+                onClose = { onCloseTask(task) },
+                checked = task.checked,
+                onCheckedChange = { checked -> onCheckedChange(task, checked) }
             )
         }
     }
@@ -95,11 +95,20 @@ fun WellnessScreenPreview() {
 }
 
 @Composable
-fun WellnessScreen(modifier: Modifier = Modifier) {
+fun WellnessScreen(
+    modifier: Modifier = Modifier,
+    wellnessViewModel: WellnessViewModel = viewModel()
+) {
     Column(modifier = modifier) {
         StatefulWaterCounter()
-        val list = rememberSaveable { getWellnessTasks().toMutableStateList() }
-        TaskList(tasks = list, onCloseTask = { task -> list.remove(task) })
+        TaskList(
+            modifier = modifier,
+            tasks = wellnessViewModel.tasks,
+            onCloseTask = { task -> wellnessViewModel.remove(task) },
+            onCheckedChange = { task, checked ->
+                wellnessViewModel.changeTaskChecked(task, checked)
+            }
+        )
     }
 }
 
@@ -108,5 +117,3 @@ fun WellnessScreen(modifier: Modifier = Modifier) {
 fun WellnessTaskItemPreview() {
     WellnessTaskItem(taskName = "Task", onClose = {})
 }
-
-private fun getWellnessTasks() = List(30) { i -> WellnessTask(i, "Task # $i") }
