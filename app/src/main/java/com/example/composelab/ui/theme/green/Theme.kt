@@ -266,7 +266,7 @@ fun AppTheme(
       }
       
       darkTheme -> darkScheme
-      else -> lightScheme
+      else -> highContrastDarkColorScheme
   }
 
   MaterialTheme(
