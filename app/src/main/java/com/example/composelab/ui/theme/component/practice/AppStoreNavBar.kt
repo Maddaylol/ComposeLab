@@ -2,11 +2,8 @@ package com.example.composelab.ui.theme.component.practice
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Build
-import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
@@ -33,7 +30,7 @@ import com.example.composelab.ui.theme.AppTheme
 fun AppStoreNavBar(
     modifier: Modifier = Modifier,
     selectedItem: Int = 0,
-    items: List<String>,
+    items: List<String> = listOf("Today", "Games", "Apps", "Home", "Me"),
     onSelected: @Composable (Int) -> Color,
     onClick: (Int) -> Unit,
     icons: List<ImageVector>
